@@ -1,0 +1,4 @@
+boto
+will>=0.5.4
+github3.py
+PyYAML

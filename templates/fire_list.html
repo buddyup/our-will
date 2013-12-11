@@ -1,0 +1,10 @@
+{% if fire_list %}&nbsp;&nbsp;<b>On fire contact list:</b>
+<ul>
+    {% for email in fire_list %}
+    <li>{{email}}</li>
+    {% endfor %}
+</ul>
+<br/>
+{% else %}
+No emails in the fire list!
+{% endif %}

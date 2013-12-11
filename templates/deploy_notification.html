@@ -1,0 +1,9 @@
+{% if outcome == "success" %}
+{{ project_name }} has been <a href='{{ build_url }}'>deployed</a>.<br/>
+<i>{{ subject }}</i><br/>
+{% if project_url %}
+<a href='{{ project_url }}'>{{ project_url }}</a>
+{% endif %}
+{% else %}
+@all deployment for {{ project_name }} has <a href='{{ build_url }}'>failed: {{outcome}}.</a>
+{% endif %}
