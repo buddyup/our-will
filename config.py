@@ -10,7 +10,6 @@
 # ------------------------------------------------------------------------------------
 
 
-
 # The list of plugin modules will should load. 
 # Will recursively loads all plugins contained in each module.
 
