@@ -26,4 +26,4 @@ class MonthlyGoalsPlugin(WillPlugin):
         if goals:
             self.say("@all our monthly goals:\n %s" % goals, message=message)
         else:
-            self.say("No montly goals set.", message=message)
+            self.say("No monthly goals set.", message=message)
