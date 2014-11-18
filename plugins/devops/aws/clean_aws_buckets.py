@@ -42,11 +42,11 @@ class CleanAWSBucketsPlugin(WillPlugin):
             self.say("Boto library not installed. Can't clean the dev buckets.", message=message)
             
 
-    @periodic(hour='1', minute='0')
-    def clean_buckets_at_1_am(self):
-        self.clean_buckets()
+    # @periodic(hour='1', minute='0')
+    # def clean_buckets_at_1_am(self):
+    #     self.clean_buckets()
 
-    @respond_to("(clear|clean ?up|empty) the dev buckets?")
-    def clean_buckets_reply(self, message):
-        self.say("Sure thing. Gimme a minute or two.", message=message)
-        self.clean_buckets(message=message, quiet=False)
+    # @respond_to("(clear|clean ?up|empty) the dev buckets?")
+    # def clean_buckets_reply(self, message):
+    #     self.say("Sure thing. Gimme a minute or two.", message=message)
+    #     self.clean_buckets(message=message, quiet=False)
