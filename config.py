@@ -75,12 +75,14 @@ PUBLIC_URL = "http://will.buddyup.org"
 # Optional
 # ------------------------------------------------------------------------------------
 
-# The list of rooms will should join.  Default is all rooms.
-ROOMS = ['Everybody Everyone!',]
+import os
+if not "DEV_ENV" in os.environ:
+    # The list of rooms will should join.  Default is all rooms.
+    ROOMS = ['Everybody Everyone!',]
 
-# The room will will talk to if the trigger is a webhook and he isn't told a specific room. 
-# Default is the first of ROOMS.
-DEFAULT_ROOM = 'Everybody Everyone!'
+    # The room will will talk to if the trigger is a webhook and he isn't told a specific room. 
+    # Default is the first of ROOMS.
+    DEFAULT_ROOM = 'Everybody Everyone!'
 
 
 # Fully-qualified folders to look for templates in, beyond the two that 

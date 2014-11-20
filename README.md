@@ -1,1 +1,1 @@
-This is an archive project only.
+This is BuddyUp's @will. He's a [will](http://skoczen.github.io/will) bot.
