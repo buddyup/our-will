@@ -27,31 +27,31 @@ class UptimePlugin(WillPlugin):
 
     @periodic(second='5')
     def buddyup_is_up(self):
-        self._verify_url("https://www.buddyup.org")
+        self._verify_url("http://www.buddyup.org")
 
     @periodic(second='5')
     def pdx_is_up(self):
-        self._verify_url("https://pdx.buddyup.org")
+        self._verify_url("http://pdx.buddyup.org")
 
     @periodic(second='5')
     def ecampus_oregonstate_is_up(self):
-        self._verify_url("https://ecampus.oregonstate.buddyup.org")
+        self._verify_url("http://ecampus.oregonstate.buddyup.org")
 
     @periodic(second='5')
     def oit_is_up(self):
-        self._verify_url("https://oit.buddyup.org")
+        self._verify_url("http://oit.buddyup.org")
 
     @periodic(second='5')
     def oregonstate_is_up(self):
-        self._verify_url("https://oregonstate.buddyup.org")
+        self._verify_url("http://oregonstate.buddyup.org")
 
     @periodic(second='5')
     def hudson_is_up(self):
-        self._verify_url("https://hudson.buddyup.org")
+        self._verify_url("http://hudson.buddyup.org")
 
     @periodic(second='5')
     def stanford_is_up(self):
-        self._verify_url("https://stanford.buddyup.org")
+        self._verify_url("http://stanford.buddyup.org")
 
     @periodic(second='5')
     def buddyup_dashboard_is_up(self):
