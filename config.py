@@ -120,4 +120,4 @@ GITHUB_ORGANIZATION_NAME = "buddyup"
 # Urls
 GOLD_STAR_URL = "https://buddyup-will.s3.amazonaws.com/goldstar.jpg"
 # MAINTENANCE_PAGE_URL = "https://buddyup-maintenance.s3.amazonaws.com/maintenance.html"
-ZOOM_URL = "https://zoom.us/j/496524986"
+ZOOM_URL = "https://zoom.us/j/8064056417"
