@@ -11,5 +11,6 @@ class SalesCyclePlugin(WillPlugin):
         message = rendered_template("sales_update.html", context=payload)
         color = "green"
         self.say(message, html=True, color=color)
+        self.say("(boom)", color=color)
 
         return "OK"
