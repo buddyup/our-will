@@ -1,6 +1,9 @@
+import boto
+
+from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
-from mixins import ServersMixin, GithubMixin
+from mixins import ServersMixin, GithubMixin, Stack
 
 class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
     
@@ -62,6 +65,58 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
                 self.save(stack.active_deploy_key, False)
                 self.say("@%s %s deployed on stack %s. %s" % (message.sender.nick, branch.name, stack.name, stack.url, ), message=message)
             
+    @require_settings("DEPLOY_PREFIX", "PUBLIC_URL", "HEROKU_API_KEY", 
+        "HEROKU_EMAIL", "SSH", "SSH_PUB", )
+    @respond_to("^new (school called|instance) (?P<school_name>.*)")
+    def new_instance(self, message, school_name=None):
+        """new school called ____: create a new instance for a school named ____"""
+        if not school_name:
+            self.say("You didn't tell me the name of the school.", message=message)
+        else:
+
+            self.say("Making a new BuddyUp instance for %s..." % school_name, message=message) 
+            branch = self.get_branch_from_branch_name("buddyup/master", is_deployable=True)
+
+            stack_name = school_name
+            stack = Stack(branch=branch, name=stack_name)
+
+            if "buddyup-%s" % stack_name in [s.name for s in stack.adapter.heroku.apps]:
+                self.say("http://%s.buddyup.org already exists - I won't overwrite it." % (stack.name,), message=message)
+            else:
+                if self.load(stack.active_deploy_key, False):
+                    self.say("%s is already being created." % (stack.name,), message=message)
+                else:
+                    self.say("Creating %s instance... <a href='%s'>View log</a>" % (stack.name, stack.deploy_log_url, ), message=message, html=True)
+                    
+                    # Make the s3 bucket.
+                    AWS_name = "buddyup-%s" % stack.name
+                    conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
+                    try:
+                        bucket = conn.get_bucket(AWS_name)
+                    except boto.exception.S3ResponseError:
+                        bucket = conn.create_bucket(AWS_name)
+                    
+                    self.deploy(stack)
+                    instance_url = "%s.buddyup.org" % stack.name
+
+                    # Set the config.
+                    stack.adapter.app.config["DEMO_SITE"] = "false"
+                    stack.adapter.app.config["DOMAIN_NAME"] = instance_url
+                    stack.adapter.app.config["AUTH0_CALLBACK_URL"] = "http://%s/callback" % instance_url
+                    stack.adapter.app.config["AWS_S3_BUCKET"]  = AWS_name
+                    stack.adapter.app.config["INTERCOM_APP_ID"] = "5714bb0i"
+                    stack.adapter.app.config["SSO_INSTANCE"] = "true"
+
+                    # Set the domain.
+                    stack.adapter.run_heroku_cli_command("domains:add %s" % instance_url)
+                    
+                    # Reset the DB.
+                    stack.adapter.run_heroku_cli_command("run scripts/reset --app %s" % AWS_name)
+
+                    self.save(stack.active_deploy_key, False)
+
+                    self.say("@%s %s is available at http://%s." % (message.sender.nick, stack.name, instance_url, ), message=message)
+
 
     @respond_to("^(?P<force>force )?redeploy (?P<code_only>code to )?(?P<branch_or_stack_name>.*)")
     def redeploy(self, message, force=False, code_only=False, branch_or_stack_name=None):
@@ -166,8 +221,15 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
     @route("/deploy-log/output/<stack_name>")
     def deploy_output(self, stack_name):
         stack = self.get_stack_from_stack_name(stack_name)
-        deploy_output = self.load(stack.deploy_output_key)
-        return deploy_output
+        if stack:
+            key = stack.deploy_output_key
+        else:
+            key = "deploy_output_%s" % stack_name.lower().replace(" ", "_")
+        try:
+            deploy_output = self.load(key)
+            return deploy_output
+        except:
+            return "Error loading output"
 
 
     @route("/deploy-log/")

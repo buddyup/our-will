@@ -1,4 +1,3 @@
-import base64
 import fcntl
 import os
 import random
@@ -358,27 +357,23 @@ StrictHostKeyChecking no
         for c in COLLABORATOR_EMAILS:
             self.add_to_saved_output(" - %s" % c)
             if not c in self.collaborators:
-                auth_token = base64.b64encode(":%s" % (settings.HEROKU_API_KEY,))
                 data = {
                     "user": c,
                     "silent": "true",
                 }
                 headers = {
                     'Accept': 'application/vnd.heroku+json; version=3',
-                    'Authorization': '%s' % auth_token,
                 }
-
                 r = requests.post(
                     "https://api.heroku.com/apps/%s/collaborators" % self.stack.url_name,
                     headers=headers,
                     data=data,
-
-
-
+                    auth=(settings.HEROKU_EMAIL, settings.HEROKU_API_KEY),
                 )
+
                 if not r.status_code == 200 and not r.status_code == 201:
-                    if "message" in r.rson() and not "is already a collaborator" in r.json()["message"]:
-                        raise Exception("Unable to add %s as a collaborator. (%s)" % (c, r.status_code))
+                    if "message" in r.json() and not "is already a collaborator" in r.json()["message"]:
+                        raise Exception("Unable to add %s as a collaborator. (%s)" % (c, r.json()["message"]))
 
     def ensure_created(self):
         self.save(self.stack.deploy_output_key, "")
