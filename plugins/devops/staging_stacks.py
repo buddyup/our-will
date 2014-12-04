@@ -118,6 +118,16 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
                     self.say("@%s %s is available at http://%s." % (message.sender.nick, stack.name, instance_url, ), message=message)
 
 
+    @require_settings("DEPLOY_PREFIX", "PUBLIC_URL", "HEROKU_API_KEY", 
+        "HEROKU_EMAIL", "SSH", "SSH_PUB", )
+    @respond_to("^reset hudson")
+    def reset_hudson(self, message):
+        """new school called ____: create a new instance for a school named ____"""
+        self.say("You got it.  Give me one minute...", message=message)
+        stack = Stack(branch="master", name="hudson")
+        stack.adapter.run_heroku_cli_command("run python scripts/reload-demo-database.py --app=hudson-buddyup")
+        self.say("@%s hudson's been reset!" % (message.sender.nick,), message=message)
+
     @respond_to("^(?P<force>force )?redeploy (?P<code_only>code to )?(?P<branch_or_stack_name>.*)")
     def redeploy(self, message, force=False, code_only=False, branch_or_stack_name=None):
         """redeploy ____: redeploy the stack named ____"""
