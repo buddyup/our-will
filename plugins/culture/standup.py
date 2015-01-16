@@ -4,7 +4,7 @@ from will import settings
 
 class StandupPlugin(WillPlugin):
 
-    @periodic(hour='18', minute='0', day_of_week="mon-thurs")
+    @periodic(hour='18', minute='0', day_of_week="mon-thu")
     @require_settings("ZOOM_URL")
     def standup(self):
         self.say("@here Standup! %s" % settings.ZOOM_URL)
