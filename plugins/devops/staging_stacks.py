@@ -93,8 +93,10 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
                     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
                     try:
                         bucket = conn.get_bucket(AWS_name)
-                    except:
+                    except boto.exception.S3ResponseError:
                         bucket = conn.create_bucket(AWS_name)
+                    except:
+                        import traceback; traceback.print_exc();
                     
                     self.deploy(stack)
                     instance_url = "%s.buddyup.org" % stack.name
