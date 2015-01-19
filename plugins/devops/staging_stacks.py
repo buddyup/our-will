@@ -93,7 +93,7 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
                     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
                     try:
                         bucket = conn.get_bucket(AWS_name)
-                    except boto.exception.S3ResponseError:
+                    except:
                         bucket = conn.create_bucket(AWS_name)
                     
                     self.deploy(stack)
