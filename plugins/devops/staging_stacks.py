@@ -118,7 +118,7 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
                     self.save(stack.active_deploy_key, False)
 
                     self.say("@%s %s is available at http://%s." % (message.sender.nick, stack.name, instance_url, ), message=message)
-                    self.say("@steven if this is a permanent school, make sure to add it to deploy.yml.", message=message)
+                    self.say("@steven if this is a permanent school, make sure to add it to circle.yml and uptime.py.", message=message)
 
 
     @require_settings("DEPLOY_PREFIX", "PUBLIC_URL", "HEROKU_API_KEY", 

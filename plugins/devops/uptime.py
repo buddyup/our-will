@@ -49,9 +49,13 @@ class UptimePlugin(WillPlugin):
     def hudson_is_up(self):
         self._verify_url("http://hudson.buddyup.org")
 
-    # @periodic(second='5')
-    # def stanford_is_up(self):
-    #     self._verify_url("http://stanford.buddyup.org")
+    @periodic(second='5')
+    def stanford_is_up(self):
+        self._verify_url("http://stanford.buddyup.org")
+
+    @periodic(second='5')
+    def stanford_is_up(self):
+        self._verify_url("http://ohsu.buddyup.org")
 
     @periodic(second='5')
     def canada_is_up(self):
