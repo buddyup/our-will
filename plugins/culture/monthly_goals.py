@@ -11,7 +11,7 @@ class MonthlyGoalsPlugin(WillPlugin):
         self.save("monthly_goals", goals)
         self.say("Got it.", message=message)
 
-    @periodic(hour='9', minute='0', day_of_week="mon")
+    @periodic(hour='13', minute='0', day_of_week="sun")
     def say_goals_on_monday(self):
         self.say_goals()
 
