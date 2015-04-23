@@ -1,4 +1,4 @@
 boto
-will>=0.6.4
+will>=0.8
 github3.py
 PyYAML

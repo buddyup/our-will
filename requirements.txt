@@ -1,5 +1,5 @@
 boto==2.35.1
-will==0.7.3
+will==0.8.0
 github3.py==0.9.3
 PyYAML==3.11
 ## The following requirements were added by pip --freeze:
