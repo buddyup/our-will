@@ -70,6 +70,10 @@ class UptimePlugin(WillPlugin):
         self._verify_url("http://collegeofsanmateo.buddyup.org")
 
     @periodic(second='5')
+    def sydney_is_up(self):
+        self._verify_url("http://sydney.buddyup.org")
+
+    @periodic(second='5')
     def buddyup_dashboard_is_up(self):
         self._verify_url("https://buddyup-dashboard.herokuapp.com")
 
