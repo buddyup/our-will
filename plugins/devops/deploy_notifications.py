@@ -26,3 +26,8 @@ class DeployedPlugin(WillPlugin):
             self.say(message, html=True, color=color)
 
         return "OK"
+
+    @route("/api/ionic/deployed/", method="POST")
+    def ionic_deploy_notification(self):
+        self.say("@all new build available in ionic app!", color="green")
+        return "OK"
