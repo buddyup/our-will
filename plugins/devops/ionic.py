@@ -10,3 +10,4 @@ class IonicPlugin(WillPlugin):
             "https://s3.amazonaws.com/uploads.hipchat.com/183747/1321383/75jBtlWrcnnmHea/upload.png",
             message=message
         )
+        self.say("CAE63470", message=message)
