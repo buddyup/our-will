@@ -6,9 +6,9 @@ class ProductNotificationPlugin(WillPlugin):
 
     @route("/api/signup", method="POST")
     def new_signup(self):
-        assert self.request.json and "first_name" in self.request.json
+        assert self.request.json and "email" in self.request.json
         payload = self.request.json
-        message = rendered_template("new_signup.html", context=payload)
+        message = rendered_template("new_user.html", context=payload)
         color = "green"
         self.say(message, color=color)
 
