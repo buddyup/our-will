@@ -4,6 +4,16 @@ from will.decorators import respond_to, periodic, hear, randomly, route, rendere
 
 class ProductNotificationPlugin(WillPlugin):
 
+    @route("/api/signup", method="POST")
+    def new_signup(self):
+        assert self.request.json and "first_name" in self.request.json
+        payload = self.request.json
+        message = rendered_template("new_signup.html", context=payload)
+        color = "green"
+        self.say(message, color=color)
+
+        return "OK"
+
     @route("/api/course-added", method="POST")
     def course_added(self):
         assert self.request.json and "course_name" in self.request.json
