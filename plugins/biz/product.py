@@ -16,10 +16,6 @@ class ProductNotificationPlugin(WillPlugin):
 
     @route("/api/reported", method="POST")
     def reported_content(self):
-        print self.request
-        print self.request.__dict__
-        print self.request.json
-        print self.request.json.__dict__
         assert self.request.json is not None
         payload = self.request.json
         # message = rendered_template("new_user.html", context=payload)
