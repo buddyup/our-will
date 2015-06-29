@@ -16,7 +16,7 @@ class ProductNotificationPlugin(WillPlugin):
 
     @route("/api/reported", method="POST")
     def reported_content(self):
-        assert self.request.json and "email" in self.request.json
+        assert self.request.json
         payload = self.request.json
         # message = rendered_template("new_user.html", context=payload)
         color = "red"
