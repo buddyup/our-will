@@ -9,3 +9,4 @@ class StandupPlugin(WillPlugin):
     @require_settings("ZOOM_URL")
     def standup(self):
         self.say("@here Standup! %s" % settings.ZOOM_URL)
+        self.say("Launch plan: http://goo.gl/z2lj6A")
