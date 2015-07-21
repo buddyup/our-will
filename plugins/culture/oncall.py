@@ -16,10 +16,11 @@ ON_CALL_USERS = {
 
 class OnCallPlugin(WillPlugin):
 
-    def support_handler(self, day_of_week):
-        user = ON_CALL_USERS[day_of_week]
-        self.say("@%s you're on call for support today!" % user)
-        self.set_topic("Support: @%s | FAQ: http://goo.gl/pX1mhU" % user)
+    def support_handler(self, day_of_week, user=None, message=None):
+        if not user:
+            user = ON_CALL_USERS[day_of_week]
+        self.say("@%s you're on call for support today!" % user, message=message)
+        self.set_topic("Support: @%s | FAQ: http://goo.gl/pX1mhU" % user, message=message)
 
     @periodic(hour='8', minute='0', day_of_week="mon")
     def support_mon(self):
@@ -48,3 +49,8 @@ class OnCallPlugin(WillPlugin):
     @periodic(hour='8', minute='0', day_of_week="sun")
     def support_sun(self):
         self.support_handler("sun")
+
+    @respond_to("I'm on call")
+    def support_today(self, message):
+        """I'm on call: sets yourself as the on-call support person for today."""
+        self.support_handler("mon", user=message.sender.nick, message=message)
