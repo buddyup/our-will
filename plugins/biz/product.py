@@ -14,6 +14,27 @@ class ProductNotificationPlugin(WillPlugin):
 
         return "OK"
 
+    @route("/api/group", method="POST")
+    def new_group(self):
+        assert self.request.json and "email" in self.request.json
+        payload = self.request.json
+        print(payload)
+        message = rendered_template("new_group.html", context=payload)
+        color = "green"
+        self.say(message, color=color)
+
+        return "OK"
+
+    @route("/api/class", method="POST")
+    def new_course(self):
+        assert self.request.json and "email" in self.request.json
+        payload = self.request.json
+        message = rendered_template("new_course.html", context=payload)
+        color = "green"
+        self.say(message, color=color)
+
+        return "OK"
+
     @route("/api/reported", method="POST")
     def reported_content(self):
         assert self.request.json is not None

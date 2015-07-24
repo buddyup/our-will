@@ -56,6 +56,7 @@ PLUGINS = [
 # Don't load any of the plugins in this list.  Same options as above.
 PLUGIN_BLACKLIST = [
     "will.plugins.productivity.hangout",
+    "will.plugins.devops.pagerduty",
     "will.plugins.productivity.bitly",   # Because it requires a BITLY_ACCESS_TOKEN key and the bitly_api library
 ]
 
