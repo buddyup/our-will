@@ -47,6 +47,19 @@ class ProductNotificationPlugin(WillPlugin):
 
         return "OK"
 
+
+    @route("/api/cancel-report", method="POST")
+    def reported_content(self):
+        assert self.request.json is not None
+        payload = self.request.json
+        # message = rendered_template("new_user.html", context=payload)
+        color = "red"
+        self.say("@all Reported content!", color=color)
+        self.say("Raw dump:", color=color)
+        self.say("/code %s" % payload)
+
+        return "OK"
+
     @route("/api/course-added", method="POST")
     def course_added(self):
         assert self.request.json and "course_name" in self.request.json

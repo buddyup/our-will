@@ -7,8 +7,8 @@ ON_CALL_USERS = {
     "mon": "hilliary",
     "tue": "brian",
     "wed": "hilliary",
-    "thu": "brian",
-    "fri": "steven",
+    "thu": "steven",
+    "fri": "hilliary",
     "sat": "brian",
     "sun": "steven",
 }
