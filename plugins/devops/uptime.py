@@ -29,53 +29,53 @@ class UptimePlugin(WillPlugin):
     def buddyup_is_up(self):
         self._verify_url("http://www.buddyup.org")
 
-    @periodic(second='5')
-    def pdx_is_up(self):
-        self._verify_url("http://pdx.buddyup.org")
+    # @periodic(second='5')
+    # def pdx_is_up(self):
+    #     self._verify_url("http://pdx.buddyup.org")
 
-    @periodic(second='5')
-    def ecampus_oregonstate_is_up(self):
-        self._verify_url("http://ecampus.oregonstate.buddyup.org")
+    # @periodic(second='5')
+    # def ecampus_oregonstate_is_up(self):
+    #     self._verify_url("http://ecampus.oregonstate.buddyup.org")
 
-    @periodic(second='5')
-    def oit_is_up(self):
-        self._verify_url("http://oit.buddyup.org")
+    # @periodic(second='5')
+    # def oit_is_up(self):
+    #     self._verify_url("http://oit.buddyup.org")
 
-    @periodic(second='5')
-    def oregonstate_is_up(self):
-        self._verify_url("http://oregonstate.buddyup.org")
+    # @periodic(second='5')
+    # def oregonstate_is_up(self):
+    #     self._verify_url("http://oregonstate.buddyup.org")
 
-    @periodic(second='5')
-    def hudson_is_up(self):
-        self._verify_url("http://hudson.buddyup.org")
+    # @periodic(second='5')
+    # def hudson_is_up(self):
+    #     self._verify_url("http://hudson.buddyup.org")
 
-    @periodic(second='5')
-    def stanford_is_up(self):
-        self._verify_url("http://stanford.buddyup.org")
+    # @periodic(second='5')
+    # def stanford_is_up(self):
+    #     self._verify_url("http://stanford.buddyup.org")
 
-    @periodic(second='5')
-    def stanford_is_up(self):
-        self._verify_url("http://ohsu.buddyup.org")
+    # @periodic(second='5')
+    # def stanford_is_up(self):
+    #     self._verify_url("http://ohsu.buddyup.org")
 
-    @periodic(second='5')
-    def canada_is_up(self):
-        self._verify_url("http://canadacollege.buddyup.org")
+    # @periodic(second='5')
+    # def canada_is_up(self):
+    #     self._verify_url("http://canadacollege.buddyup.org")
 
-    @periodic(second='5')
-    def skylinecollege_is_up(self):
-        self._verify_url("http://skylinecollege.buddyup.org")
+    # @periodic(second='5')
+    # def skylinecollege_is_up(self):
+    #     self._verify_url("http://skylinecollege.buddyup.org")
 
-    @periodic(second='5')
-    def collegeofsanmateo_is_up(self):
-        self._verify_url("http://collegeofsanmateo.buddyup.org")
+    # @periodic(second='5')
+    # def collegeofsanmateo_is_up(self):
+    #     self._verify_url("http://collegeofsanmateo.buddyup.org")
 
-    @periodic(second='5')
-    def sydney_is_up(self):
-        self._verify_url("http://sydney.buddyup.org")
+    # @periodic(second='5')
+    # def sydney_is_up(self):
+    #     self._verify_url("http://sydney.buddyup.org")
 
-    @periodic(second='5')
-    def buddyup_dashboard_is_up(self):
-        self._verify_url("https://buddyup-dashboard.herokuapp.com")
+    # @periodic(second='5')
+    # def buddyup_dashboard_is_up(self):
+    #     self._verify_url("https://buddyup-dashboard.herokuapp.com")
 
     @respond_to("^add (?P<email>.*) to the on fire list", multiline=True)
     def add_to_fire_list(self, message, email=""):
