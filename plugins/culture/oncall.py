@@ -5,12 +5,12 @@ from will import settings
 
 ON_CALL_USERS = {
     "mon": "hilliary",
-    "tue": "brian",
+    "tue": "hilliary",
     "wed": "hilliary",
-    "thu": "steven",
-    "fri": "hilliary",
+    "thu": "hilliary",
+    "fri": "brian",
     "sat": "brian",
-    "sun": "steven",
+    "sun": "brian",
 }
 
 
