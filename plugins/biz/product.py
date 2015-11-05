@@ -49,9 +49,22 @@ class ProductNotificationPlugin(WillPlugin):
 
         return "OK"
 
+    @route("/api/account-deleted", method="POST")
+    def delete_account(self):
+        print self.request
+        print self.request.json
+        assert self.request.json is not None
+        payload = self.request.json
+        # message = rendered_template("new_user.html", context=payload)
+        color = "red"
+        self.say("Deleted account.", color=color)
+        self.say("Raw dump:", color=color)
+        self.say("/code %s" % payload)
+
+        return "OK"
 
     @route("/api/cancel-report", method="POST")
-    def reported_content(self):
+    def cancel_reported_content(self):
         assert self.request.json is not None
         payload = self.request.json
         # message = rendered_template("new_user.html", context=payload)
