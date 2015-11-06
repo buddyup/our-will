@@ -57,9 +57,7 @@ class ProductNotificationPlugin(WillPlugin):
         payload = self.request.json
         # message = rendered_template("new_user.html", context=payload)
         color = "red"
-        self.say("Deleted account.", color=color)
-        self.say("Raw dump:", color=color)
-        self.say("/code %s" % payload)
+        self.say("%(first_name)s %(last_name)s (%(email)s) deleted their account." % payload, color=color)
 
         return "OK"
 
