@@ -11,7 +11,7 @@ VALUES = [
     "Communicate Clearly and Often. Spend the effort to communicate well, in writing and speech.  Communicate more often than you think is necessary. Never say sorry.",
     "Use Science. Hypothesize, Experiment, Measure, Learn.",
     "Invest in Tools. Turn knowledge and processes into people-independent tools.",
-    "Work Where, When and How You're at Your Best. Find the spot where you’re at your best, and make the most of it.  Bring your best self and best hours to BuddyUp.",
+    "Work Where, When and How You're at Your Best. Find the spot where you're at your best, and make the most of it.  Bring your best self and best hours to BuddyUp.",
     "Seek Discomfort. Continually and intentionally put yourself in situations where you'll grow.",
     "Get Shit Done. Be a proactive, no-ego doer.",
 ]
