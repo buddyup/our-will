@@ -31,3 +31,10 @@ class DeployedPlugin(WillPlugin):
     def ionic_deploy_notification(self):
         self.say("@all new build available in ionic app!", color="green")
         return "OK"
+
+    @route("/api/docker/build/", method="POST")
+    def docker_build_notification(self):
+        # https://hub.docker.com/r/buddyup/core/~/settings/webhooks/
+        data = self.request.json["repository"]
+        self.say("@here new docker build of %s is ready!" % data["name"], color="green")
+        return "OK"
