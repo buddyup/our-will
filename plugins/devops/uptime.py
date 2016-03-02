@@ -8,13 +8,18 @@ from will.decorators import respond_to, periodic, hear, randomly, route, rendere
 class UptimePlugin(WillPlugin):
 
     def _verify_url(self, url):
+        room = get_room_from_name_or_id("Uptime Downtime")
         try:
             r = requests.get(url)
             if not r.status_code == 200:
                 time.sleep(5)
                 r = requests.get(url)
                 if not r.status_code == 200:
-                    self.say("@all WARNING: %s is down! (%s code)" % (url, r.status_code), color="red")
+                    self.say(
+                        "@all WARNING: %s is down! (%s code)" % (url, r.status_code),
+                        color="red",
+                        room=room
+                    )
 
                     on_fire_list = self.load("on_fire_list", [])
                     self.send_email(
@@ -29,6 +34,10 @@ class UptimePlugin(WillPlugin):
     @periodic(second='5')
     def buddyup_is_up(self):
         self._verify_url("http://www.buddyup.org")
+
+    @periodic(second='5')
+    def buddyup_app_is_up(self):
+        self._verify_url("http://app.buddyup.org")
 
     # @periodic(second='5')
     # def pdx_is_up(self):
@@ -102,6 +111,7 @@ class UptimePlugin(WillPlugin):
 
     @respond_to("^send test email to the on fire list", multiline=True)
     def test_on_fire_emails(self, message):
+        room = get_room_from_name_or_id("Uptime Downtime")
         on_fire_list = self.load("on_fire_list", [])
 
         self.send_email(
@@ -111,4 +121,4 @@ class UptimePlugin(WillPlugin):
             message="Everything is fine :)"
         )
 
-        self.say("Sent out the test email", message=message)
+        self.say("Sent out the test email", message=message, room=room)
