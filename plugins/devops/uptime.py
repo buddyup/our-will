@@ -8,7 +8,7 @@ from will.decorators import respond_to, periodic, hear, randomly, route, rendere
 class UptimePlugin(WillPlugin):
 
     def _verify_url(self, url):
-        room = get_room_from_name_or_id("Uptime Downtime")
+        room = self.get_room_from_name_or_id("Uptime Downtime")
         try:
             r = requests.get(url)
             if not r.status_code == 200:
@@ -111,7 +111,7 @@ class UptimePlugin(WillPlugin):
 
     @respond_to("^send test email to the on fire list", multiline=True)
     def test_on_fire_emails(self, message):
-        room = get_room_from_name_or_id("Uptime Downtime")
+        room = self.get_room_from_name_or_id("Uptime Downtime")
         on_fire_list = self.load("on_fire_list", [])
 
         self.send_email(
