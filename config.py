@@ -81,9 +81,9 @@ PUBLIC_URL = "http://will.buddyup.org"
 import os
 if not "DEV_ENV" in os.environ:
     # The list of rooms will should join.  Default is all rooms.
-    # ROOMS = ['Everybody Everyone!', ]
+    ROOMS = ['Everybody Everyone!', 'Uptime Downtime', ]
 
-    # The room will will talk to if the trigger is a webhook and he isn't told a specific room. 
+    # The room will will talk to if the trigger is a webhook and he isn't told a specific room.
     # Default is the first of ROOMS.
     DEFAULT_ROOM = 'Everybody Everyone!'
 
