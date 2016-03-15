@@ -30,7 +30,6 @@ class PipedrivePlugin(WillPlugin):
 
         payload = {
             'name': pipedrive_users.get(body['current']['creator_user_id'], 'Unkown Sales Agent'),
-            'status': body['current'].get('status'),
             'from_stage': body['previous']['stage_id'],
             'to_stage': body['current']['stage_id'],
             'title': body['current']['title'],
@@ -46,4 +45,12 @@ class PipedrivePlugin(WillPlugin):
     def update_pipedrive_users(self):
         """Update the cached list of Pipedrive users (user_id) periodically."""
         pipedrive_users = {}
+        # TODO ALECK: Get these from the pipedrive API.
         self.save('pipedrive_users', pipedrive_users)
+
+    @periodic(hour='1', minute='10', day_of_week="mon-fri")
+    def update_pipedrive_stages(self):
+        """Update the cached list of Pipedrive users (user_id) periodically."""
+        pipedrive_stages = {}
+        # TODO ALECK: Get these from the pipedrive API.
+        self.save('pipedrive_stages', pipedrive_stages)
