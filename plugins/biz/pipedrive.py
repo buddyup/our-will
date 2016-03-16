@@ -47,7 +47,7 @@ class PipedrivePlugin(WillPlugin):
         print "\n\n\n", pipedrive_users, "\n\n\n"
         body = self.request.json
         payload = {
-            'name': pipedrive_users.get(body['current']['creator_user_id'], 'Unkown Sales Agent'),
+            'name': pipedrive_users.get(body['current']['creator_user_id'], {}).get('name', 'Unknown Sales Agent'),
             'from_stage': body['previous']['stage_id'],
             'to_stage': body['current']['stage_id'],
             'title': body['current']['title'],
