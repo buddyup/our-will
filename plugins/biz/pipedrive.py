@@ -129,7 +129,7 @@ class PipedrivePlugin(WillPlugin):
 
     @periodic(hour='1', minute='0', day_of_week="mon-fri")
     def update_pipedrive_users(self):
-        """Update the cached list of Pipedrive users (user_id) periodically."""
+        """Get and store pipedrive users."""
         self._raise_for_missing_pipedrive_key()
         url = 'https://api.pipedrive.com/v1/users'
         resp = requests.get(url, params={'api_token': settings.PIPEDRIVE_KEY})
@@ -148,7 +148,7 @@ class PipedrivePlugin(WillPlugin):
 
     @periodic(hour='1', minute='10', day_of_week="mon-fri")
     def update_pipedrive_stages(self):
-        """Get pipedrive stages from storgage or API."""
+        """Get and store pipedrive stages."""
         self._raise_for_missing_pipedrive_key()
         pipeline_ids = self.pipedrive_pipelines.keys()
         pipedrive_stages = {
@@ -160,7 +160,7 @@ class PipedrivePlugin(WillPlugin):
         self._pipedrive_stages = pipedrive_stages
 
     def update_pipedrive_pipelines(self):
-        """Get pipedrive pipelines from storgage or API."""
+        """Get and store pipedrive pipelines."""
         self._raise_for_missing_pipedrive_key()
         url = 'https://api.pipedrive.com/v1/pipelines'
         resp = requests.get(url, params={'api_token': settings.PIPEDRIVE_KEY})
