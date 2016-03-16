@@ -5,6 +5,8 @@ Quickstart
         1. set your Pipedrive API Key in your env or Will's config.py as PIPEDRIVE_KEY or (recommended)in the
         environment as WILL_PIPEDRIVE_KEY
         2. create a push notification subscription at https://<your-org>.pipedrive.com/push_notifications/index#
+        setting the user to a user with API access and the web hook url to http://your-will.org/api/pipedrive-update
+        for the Events `updated.deal`.
         3. add any pipelines or stages to the whitelists and blacklists below in config.py by id
             - ex. PIPEDRIVE_PIPELINE_WHITELIST = [1, 7]
 
@@ -50,6 +52,23 @@ class PipedrivePlugin(WillPlugin):
             payload['current']['status'] == 'won'
         )
 
+    def _passes_through_whitelist_blacklist(self, payload):
+        pipeline_whitelist = getattr(settings, 'PIPEDRIVE_PIPELINE_WHITELIST', [])
+        pipeline_blacklist = getattr(settings, 'PIPEDRIVE_PIPELINE_BLACKLIST', [])
+        stage_whitelist = getattr(settings, 'PIPEDRIVE_STAGE_WHITELIST', [])
+        stage_blacklist = getattr(settings, 'PIPEDRIVE_STAGE_BLACKLIST', [])
+        stage_id = payload['stage_id']
+        pipeline_id = payload['pipeline_id']
+
+        if pipeline_id in pipeline_blacklist or stage_id in stage_blacklist:
+            return False
+        if pipeline_whitelist and pipeline_id not in pipeline_whitelist:
+            return False
+        if stage_whitelist and stage_id not in stage_whitelist:
+            return False
+
+        return True
+
     @route("/api/pipedrive-update", method="POST")
     def pipedrive_notification(self):
         """Web hook push notification endpoint from Pipedrive subscription(s) when a deal moves.
@@ -74,6 +93,9 @@ class PipedrivePlugin(WillPlugin):
             'title': body['current']['title'],
             'pipeline': pipelines.get(body['current']['pipeline_id'], {}).get('name'),
         }
+
+        if not self._passes_through_whitelist_blacklist(body['current']):
+            return 'OK'
 
         if self._pipedrive_deal_status_won(body):
             message = rendered_template("pipedrive_won.html", context=payload)
