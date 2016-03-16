@@ -1,6 +1,20 @@
-"""Pipedrive CRM Plugin for Will.
+"""Pipedrive CRM Web Hook Push Notification Plugin for Will.
 
-Requries settings.PIPEDRIVE_KEY which can be set in the OS enviroment as WILL_PIPEDRIVE_KEY
+Quickstart
+    To use the Pipedrive Plugin:
+        1. set your Pipedrive API Key in your env or Will's config.py as PIPEDRIVE_KEY or (recommended)in the
+        environment as WILL_PIPEDRIVE_KEY
+        2. create a push notification subscription at https://<your-org>.pipedrive.com/push_notifications/index#
+        3. add any pipelines or stages to the whitelists and blacklists below in config.py by id
+            - ex. PIPEDRIVE_PIPELINE_WHITELIST = [1, 7]
+
+    Will will notify its default chat room when a deal is moved from one stage to another, won, or lost.
+
+Optional config.py settings:
+    PIPEDRIVE_PIPELINE_WHITELIST - only pipeline ids on the whitelist trigger notifications
+    PIPEDRIVE_STAGE_WHITELIST - only stages on the whiltelist will trigger notifications
+    PIPEDRIVE_PIPELINE_BLACKLIST - pipeline ids on the blacklist will not trigger notifications (overides whitelist)
+    PIPEDRIVE_STAGE_BLACKLIST - stage ids on the blacklist will not trigger notifications (overides whitelist)
 """
 
 import requests
@@ -61,16 +75,16 @@ class PipedrivePlugin(WillPlugin):
             'pipeline': pipelines.get(body['current']['pipeline_id'], {}).get('name'),
         }
 
-        if self._pipedrive_deal_stage_changed(body):
-            message = rendered_template("pipedrive_update.html", context=payload)
+        if self._pipedrive_deal_status_won(body):
+            message = rendered_template("pipedrive_won.html", context=payload)
             self.say(message, html=True, color="green")
 
-        if self._pipedrive_deal_status_lost(body):
+        elif self._pipedrive_deal_status_lost(body):
             message = rendered_template("pipedrive_lost.html", context=payload)
             self.say(message, html=True, color="red")
 
-        if self._pipedrive_deal_status_won(body):
-            message = rendered_template("pipedrive_won.html", context=payload)
+        elif self._pipedrive_deal_stage_changed(body):
+            message = rendered_template("pipedrive_update.html", context=payload)
             self.say(message, html=True, color="green")
 
         return 'OK'
