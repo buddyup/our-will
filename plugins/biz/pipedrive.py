@@ -44,6 +44,8 @@ class PipedrivePlugin(WillPlugin):
         """
         assert self.request.json and "current" in self.request.json and "previous" in self.request.json
         pipedrive_users = self.pipedrive_users
+        stages = self.pipedrive_stages
+        print "\n\n\n Stages: ", stages, "\n\n\n"
         body = self.request.json
 
         user = pipedrive_users.get(body['current']['creator_user_id'])
@@ -76,9 +78,8 @@ class PipedrivePlugin(WillPlugin):
     def update_pipedrive_users(self):
         """Update the cached list of Pipedrive users (user_id) periodically."""
         self._raise_for_missing_pipedrive_key()
-        pipedrive_users = self.load('pipedrive_users') or {}
-        url = 'https://api.pipedrive.com/v1/users?api_token={key}'.format(key=settings.PIPEDRIVE_KEY)
-        resp = requests.get(url)
+        url = 'https://api.pipedrive.com/v1/users'
+        resp = requests.get(url, params={'api_token': settings.PIPEDRIVE_KEY})
         payload = resp.json()
         pipedrive_users = {
             user['id']: user for user in payload['data']
@@ -86,21 +87,30 @@ class PipedrivePlugin(WillPlugin):
         self.save('pipedrive_users', pipedrive_users)
         self._pipedrive_users = pipedrive_users
 
+    def _fetch_stages_for_pipeline(self, pipeline_id):
+        url = 'https://api.pipedrive.com/v1/stages'
+        resp = requests.get(url, params={'api_token': settings.PIPEDRIVE_KEY, 'pipeline_id': pipeline_id})
+        payload = resp.json()
+        return payload['data']
+
     @periodic(hour='1', minute='10', day_of_week="mon-fri")
     def update_pipedrive_stages(self):
-        """Update the cached list of Pipedrive users (user_id) periodically."""
-        pipedrive_stages = self.load('pipedrive_stages') or {}
+        """Get pipedrive stages from storgage or API."""
         self._raise_for_missing_pipedrive_key()
-        # TODO ALECK: Get these from the pipedrive API.
+        pipeline_ids = self.pipedrive_pipelines.keys()
+        pipedrive_stages = {
+            stage['id']: stage
+            for p_id in pipeline_ids
+            for stage in self._fetch_stages_for_pipeline(p_id)
+        }
         self.save('pipedrive_stages', pipedrive_stages)
         self._pipdrive_stages = pipedrive_stages
 
     def update_pipedrive_pipelines(self):
         """Get pipedrive pipelines from storgage or API."""
         self._raise_for_missing_pipedrive_key()
-        pipedrive_pipelines = self.load('pipedrive_pipelines') or {}
-        url = 'https://api.pipedrive.com/v1/pipelines?api_token={key}'.format(key=settings.PIPEDRIVE_KEY)
-        resp = requests.get(url)
+        url = 'https://api.pipedrive.com/v1/pipelines'
+        resp = requests.get(url, params={'api_token': settings.PIPEDRIVE_KEY})
         payload = resp.json()
         pipedrive_pipelines = {
             pipeline['id']: pipeline for pipeline in payload['data']
@@ -110,10 +120,7 @@ class PipedrivePlugin(WillPlugin):
 
     @property
     def pipedrive_users(self):
-        """A dict of the Pipedrive sales agents/users.
-
-        This checkes on the class, then storage (redis), then fetches from the Pipedrive API.
-        """
+        """Pipedrive sales agents/users."""
         if not hasattr(self, "_pipedrive_users"):
             self._pipedrive_users = self.load('pipedrive_users')
             if not self._pipedrive_users:
@@ -122,8 +129,18 @@ class PipedrivePlugin(WillPlugin):
         return self._pipedrive_users
 
     @property
-    def pipelines(self):
-        """The pipelines in pipedrive."""
+    def pipedrive_stages(self):
+        """Pipedrive stages."""
+        if not hasattr(self, "_pipedrive_stages"):
+            self._pipedrive_stages = self.load('pipedrive_stages')
+            if not self._pipedrive_stages:
+                self.update_pipedrive_stages()
+
+        return self._pipedrive_stages
+
+    @property
+    def pipedrive_pipelines(self):
+        """Pipedrive pipelines."""
         if not hasattr(self, "_pipedrive_pipelines"):
             self._pipedrive_pipelines = self.load('pipedrive_pipelines')
             if not self._pipedrive_pipelines:
