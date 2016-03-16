@@ -14,6 +14,18 @@ class PipedrivePlugin(WillPlugin):
     def _pipedrive_deal_stage_changed(self, payload):
         return payload['current']['stage_id'] != payload['previous']['stage_id']
 
+    def _pipedrive_deal_status_lost(self, payload):
+        return (
+            payload['current']['status'] != payload['previous']['status'] and
+            payload['current']['status'] == 'lost'
+        )
+
+    def _pipedrive_deal_status_won(self, payload):
+        return (
+            payload['current']['status'] != payload['previous']['status'] and
+            payload['current']['status'] == 'won'
+        )
+
     @route("/api/pipedrive-update", method="POST")
     def pipedrive_notification(self):
         """Web hook push notification endpoint from Pipedrive subscription(s) when a deal moves.
@@ -24,20 +36,27 @@ class PipedrivePlugin(WillPlugin):
         assert self.request.json and "current" in self.request.json and "previous" in self.request.json
         pipedrive_users = self.load('pipedrive_users') or {}
         body = self.request.json
-
-        if not self._pipedrive_deal_stage_changed(body):
-            return 'OK'
-
         payload = {
             'name': pipedrive_users.get(body['current']['creator_user_id'], 'Unkown Sales Agent'),
             'from_stage': body['previous']['stage_id'],
             'to_stage': body['current']['stage_id'],
             'title': body['current']['title'],
         }
-        message = rendered_template("pipeline_update.html", context=payload)
-        color = "green"
-        self.say(message, html=True, color=color)
-        self.say("(boom)", color=color)
+
+        if self._pipedrive_deal_stage_changed(body):
+            message = rendered_template("pipedrive_update.html", context=payload)
+            color = "green"
+            self.say(message, html=True, color=color)
+
+        if self._pipedrive_deal_status_lost(body):
+            message = rendered_template("pipedrive_lost.html", context=payload)
+            color = "red"
+            self.say(message, html=True, color=color)
+
+        if self._pipedrive_deal_status_won(body):
+            message = rendered_template("pipedrive_won.html", context=payload)
+            color = "green"
+            self.say(message, html=True, color=color)
 
         return 'OK'
 
