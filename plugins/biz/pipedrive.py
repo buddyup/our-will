@@ -69,22 +69,27 @@ class PipedrivePlugin(WillPlugin):
 
         return True
 
-    @route("/api/pipedrive-update", method="POST")
-    def pipedrive_notification(self):
-        """Web hook push notification endpoint from Pipedrive subscription(s) when a deal moves.
-
-        https://developers.pipedrive.com/v1#methods-PushNotifications / REST Hooks / Web hooks
-        """
-        assert self.request.json and "current" in self.request.json and "previous" in self.request.json
+    def generate_payload(self, body):
+        """Geneate the payload for messages and fetch API updates as required."""
         pipedrive_users = self.pipedrive_users
         stages = self.pipedrive_stages
         pipelines = self.pipedrive_pipelines
-        body = self.request.json
 
         user = pipedrive_users.get(body['current']['creator_user_id'])
         if not user:
             self.update_pipedrive_users()
             user = pipedrive_users.get(body['current']['creator_user_id'], {})
+
+        to_stage = stages.get(body['current']['stage_id'])
+        from_stage = stages.get(body['previous']['stage_id'])
+        if not to_stage or not from_stage:
+            self.update_pipedrive_stages()
+            stages = self.pipedrive_stages
+
+        pipeline = pipelines.get(body['current']['pipeline_id'])
+        if not pipeline:
+            self.update_pipedrive_pipelines()
+            pipelines = self.pipedrive_pipelines
 
         payload = {
             'name': user.get('name', 'Unknown Sales Agent'),
@@ -93,6 +98,17 @@ class PipedrivePlugin(WillPlugin):
             'title': body['current']['title'],
             'pipeline': pipelines.get(body['current']['pipeline_id'], {}).get('name'),
         }
+        return payload
+
+    @route("/api/pipedrive-update", method="POST")
+    def pipedrive_notification(self):
+        """Web hook push notification endpoint from Pipedrive subscription(s) when a deal moves.
+
+        https://developers.pipedrive.com/v1#methods-PushNotifications / REST Hooks / Web hooks
+        """
+        assert self.request.json and "current" in self.request.json and "previous" in self.request.json
+        body = self.request.json
+        payload = self.generate_payload(body)
 
         if not self._passes_through_whitelist_blacklist(body['current']):
             return 'OK'
