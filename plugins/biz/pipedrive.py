@@ -1,15 +1,25 @@
-"""Pipedrive CRM Plugin for Will."""
+"""Pipedrive CRM Plugin for Will.
 
+Requries settings.PIPEDRIVE_KEY which can be set in the OS enviroment as WILL_PIPEDRIVE_KEY
+"""
+
+import requests
 from will.plugin import WillPlugin
 from will.decorators import (
     periodic,
     rendered_template,
     route,
 )
+from will import settings
 
 
 class PipedrivePlugin(WillPlugin):
     """A Will plugin for BuddyUp's CRM Pipedrive's webhooks."""
+
+    def _raise_for_missing_pipedrive_key(self):
+        """Raise an AttributeError if PIPEDRIVE_KEY is missing from settings."""
+        if not hasattr(settings, 'PIPEDRIVE_KEY'):
+            raise AttributeError('PIPEDRIVE_KEY missing from settings, please set WILL_PIPEDRIVE_KEY in the env.')
 
     def _pipedrive_deal_stage_changed(self, payload):
         return payload['current']['stage_id'] != payload['previous']['stage_id']
@@ -32,9 +42,9 @@ class PipedrivePlugin(WillPlugin):
 
         https://developers.pipedrive.com/v1#methods-PushNotifications / REST Hooks / Web hooks
         """
-        print self.request.json
         assert self.request.json and "current" in self.request.json and "previous" in self.request.json
-        pipedrive_users = self.load('pipedrive_users') or {}
+        pipedrive_users = self.pipedrive_users
+        print "\n\n\n", pipedrive_users, "\n\n\n"
         body = self.request.json
         payload = {
             'name': pipedrive_users.get(body['current']['creator_user_id'], 'Unkown Sales Agent'),
@@ -45,31 +55,50 @@ class PipedrivePlugin(WillPlugin):
 
         if self._pipedrive_deal_stage_changed(body):
             message = rendered_template("pipedrive_update.html", context=payload)
-            color = "green"
-            self.say(message, html=True, color=color)
+            self.say(message, html=True, color="green")
 
         if self._pipedrive_deal_status_lost(body):
             message = rendered_template("pipedrive_lost.html", context=payload)
-            color = "red"
-            self.say(message, html=True, color=color)
+            self.say(message, html=True, color="red")
 
         if self._pipedrive_deal_status_won(body):
             message = rendered_template("pipedrive_won.html", context=payload)
-            color = "green"
-            self.say(message, html=True, color=color)
+            self.say(message, html=True, color="green")
 
         return 'OK'
 
     @periodic(hour='1', minute='0', day_of_week="mon-fri")
     def update_pipedrive_users(self):
         """Update the cached list of Pipedrive users (user_id) periodically."""
-        pipedrive_users = {}
-        # TODO ALECK: Get these from the pipedrive API.
+        self._raise_for_missing_pipedrive_key()
+        pipedrive_users = self.load('pipedrive_users') or {}
+        url = 'https://api.pipedrive.com/v1/users?api_token={key}'.format(key=settings.PIPEDRIVE_KEY)
+        resp = requests.get(url)
+        payload = resp.json()
+        pipedrive_users = {
+            user['id']: user for user in payload['data']
+        }
         self.save('pipedrive_users', pipedrive_users)
+        self._pipedrive_users = pipedrive_users
 
     @periodic(hour='1', minute='10', day_of_week="mon-fri")
     def update_pipedrive_stages(self):
         """Update the cached list of Pipedrive users (user_id) periodically."""
-        pipedrive_stages = {}
+        pipedrive_stages = self.load('pipedrive_stages') or {}
+        self._raise_for_missing_pipedrive_key()
         # TODO ALECK: Get these from the pipedrive API.
         self.save('pipedrive_stages', pipedrive_stages)
+        self._pipdrive_stages = pipedrive_stages
+
+    @property
+    def pipedrive_users(self):
+        """A dict of the Pipedrive sales agents/users.
+
+        This checkes on the class, then storage (redis), then fetches from the Pipedrive API.
+        """
+        if not hasattr(self, "_pipedrive_users"):
+            self._pipedrive_users = self.load('pipedrive_users')
+            if not self._pipedrive_users:
+                self.update_pipedrive_users()
+
+        return self._pipedrive_users
