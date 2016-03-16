@@ -45,7 +45,7 @@ class PipedrivePlugin(WillPlugin):
         assert self.request.json and "current" in self.request.json and "previous" in self.request.json
         pipedrive_users = self.pipedrive_users
         stages = self.pipedrive_stages
-        print "\n\n\n Stages: ", stages, "\n\n\n"
+        pipelines = self.pipedrive_pipelines
         body = self.request.json
 
         user = pipedrive_users.get(body['current']['creator_user_id'])
@@ -55,9 +55,10 @@ class PipedrivePlugin(WillPlugin):
 
         payload = {
             'name': user.get('name', 'Unknown Sales Agent'),
-            'from_stage': body['previous']['stage_id'],
-            'to_stage': body['current']['stage_id'],
+            'from_stage': stages.get(body['previous']['stage_id'], {}).get('name'),
+            'to_stage': stages.get(body['current']['stage_id'], {}).get('name'),
             'title': body['current']['title'],
+            'pipeline': pipelines.get(body['current']['pipeline_id'], {}).get('name'),
         }
 
         if self._pipedrive_deal_stage_changed(body):
@@ -104,7 +105,7 @@ class PipedrivePlugin(WillPlugin):
             for stage in self._fetch_stages_for_pipeline(p_id)
         }
         self.save('pipedrive_stages', pipedrive_stages)
-        self._pipdrive_stages = pipedrive_stages
+        self._pipedrive_stages = pipedrive_stages
 
     def update_pipedrive_pipelines(self):
         """Get pipedrive pipelines from storgage or API."""
