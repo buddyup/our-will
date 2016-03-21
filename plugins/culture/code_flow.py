@@ -6,7 +6,7 @@ class CodeFlowPlugin(WillPlugin):
 
     @respond_to("CR (?:for )?(?P<pr_id>\d*)$")
     def cr(self, message, pr_id):
-        """cr ___: Post a link to buddyup CR #___""" 
+        """cr ___: Post a link to buddyup CR #___"""
         self.say("@all (crrequest) https://github.com/buddyup/core/pull/%s" % pr_id, message=message)
 
     @respond_to("CR (?:for )?(?P<pr_id>\d*) g2g$")
@@ -17,7 +17,7 @@ class CodeFlowPlugin(WillPlugin):
 
     @respond_to("FR (?:for )?(?P<pr_id>\d*)$")
     def fr(self, message, pr_id):
-        """fr ___: Post a link to buddyup FR #___""" 
+        """fr ___: Post a link to buddyup FR #___"""
         self.say("@all (frrequest) https://github.com/buddyup/core/pull/%s" % pr_id, message=message)
 
     @respond_to("FR (?:for )?(?P<pr_id>\d*) g2g$")
