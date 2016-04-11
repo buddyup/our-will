@@ -36,5 +36,5 @@ class DeployedPlugin(WillPlugin):
     def docker_build_notification(self):
         # https://hub.docker.com/r/buddyup/core/~/settings/webhooks/
         data = self.request.json["repository"]
-        self.say("@here new docker build of %s is ready! https://hub.docker.com/r/buddyup/core/builds/" % data["name"], color="green")
+        self.say("@here new docker build of %(name)s is ready! https://hub.docker.com/r/buddyup/%(name)s/builds/" % data, color="green")
         return "OK"
