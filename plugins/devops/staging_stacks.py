@@ -204,7 +204,7 @@ class StagingPlugin(WillPlugin, ServersMixin, GithubMixin):
         color = "green"
         if self.stacks != {}:
             color = "red"
-        self.say(servers_html, html=True, color=color)
+            self.say(servers_html, html=True, color=color)
 
     @periodic(hour='18', minute='0', second='0', day_of_week="mon-fri")
     def seriously_remind_staging_servers(self):

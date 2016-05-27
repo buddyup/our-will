@@ -8,5 +8,6 @@ class StandupPlugin(WillPlugin):
     @periodic(hour='9', minute='30', day_of_week="mon-fri")
     @require_settings("ZOOM_URL")
     def standup(self):
-        self.say("@here (standup) Standup! %s" % settings.ZOOM_URL)
-        self.say("Launch plan: https://groundcontrol.buddyup.org/#/app/launch_list")
+        # self.say("@here (standup) Standup! %s" % settings.ZOOM_URL)
+        # self.say("Launch plan: https://groundcontrol.buddyup.org/#/app/launch_list")
+        pass
